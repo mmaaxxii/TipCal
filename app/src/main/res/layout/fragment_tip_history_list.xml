@@ -2,12 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.maxie.tipcal.TipHistoryListFragment">
+    tools:context=".fragments.TipHistoryListFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    //crea listado
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/recyclerView" />
+
 
 </FrameLayout>

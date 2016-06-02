@@ -1,4 +1,4 @@
-package com.example.maxie.tipcal;
+package com.example.maxie.tipcal.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.maxie.tipcal.R;
+import com.example.maxie.tipcal.TipCalcApp;
+import com.example.maxie.tipcal.adapters.TipAdapter;
+import com.example.maxie.tipcal.fragments.TipHistoryListFragment;
+import com.example.maxie.tipcal.fragments.TipHistoryListFragmentListener;
+import com.example.maxie.tipcal.models.TipRecord;
+
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.txtTip)
     TextView txtTip;
 
+    //variable para enviar mensajes
+    private TipHistoryListFragmentListener fragmentListener;
     private final static int TIP_STEP_CHANGE = 1;
     private final static int DEFAULT_TIP_PERCENTAGE = 10;
     @Override
@@ -42,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        //instancio variable de tipo fragmento y le asigno el fragmento q creo en activity_main
+        TipHistoryListFragment fragment = (TipHistoryListFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentList);
+        fragment.setRetainInstance(true);
+        fragmentListener = (TipHistoryListFragmentListener)fragment;
     }
 
     @Override
@@ -61,13 +76,19 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.btnSubmit)
     public void handleClickSubmit(){
         hideKeyboard();
+
         String strInputTotal = inputBill.getText().toString().trim();
         if(!strInputTotal.isEmpty()) {
             double total = Double.parseDouble(strInputTotal);
             int tipPercentage = getTipPercentage();
-            double tip = total*(tipPercentage/100d);
+            TipRecord tipRecord = new TipRecord();
+            tipRecord.setBill(total);
+            tipRecord.setTipPercentage(tipPercentage);
+            tipRecord.setTimestamp(new Date());
 
-            String strTip = String.format(getString(R.string.global_message_tip), tip);
+            String strTip = String.format(getString(R.string.global_message_tip), tipRecord.getTip() );
+            //envio mensajes
+            fragmentListener.addToList(tipRecord);
             txtTip.setVisibility(View.VISIBLE);
             txtTip.setText(strTip);
         }
